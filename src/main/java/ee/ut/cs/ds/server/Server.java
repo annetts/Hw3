@@ -12,26 +12,7 @@ public class Server {
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-    	// Initialize socket
-        ServerSocket ssocket = new ServerSocket(PORT);
-        
-        // Start game engine thread
-        Thread engine = new Thread(new Engine());
-        engine.start();
-        
-        try {
-            Utils.logger("Waiting for a connection on port " + PORT, false);
-            while (true) {
-                // Wait new connections
-                Socket socket = ssocket.accept();
-                Utils.logger("connected client: " + socket.getRemoteSocketAddress(), false);
-                // Create a thread from each client.
-                Thread thread = new Thread(new Worker(socket));
-                thread.start();
-            }
-        } finally {
-            ssocket.close();
-        }
+
     }
 
 }

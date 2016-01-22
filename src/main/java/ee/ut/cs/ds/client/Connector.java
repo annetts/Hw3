@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 
@@ -13,7 +14,9 @@ import ee.ut.cs.ds.Utils;
 import ee.ut.cs.ds.client.characters.AGameCharacter;
 import ee.ut.cs.ds.client.characters.GameFly;
 import ee.ut.cs.ds.client.characters.GameFrog;
+import ee.ut.cs.ds.server.Engine;
 import ee.ut.cs.ds.server.Server;
+import ee.ut.cs.ds.server.Worker;
 
 /**
  * Connects client to server.
@@ -88,6 +91,30 @@ public class Connector {
 			Utils.logger("try again", false);
 		}
     }
+	
+	
+	public void startServer() throws IOException {
+    	// Initialize socket
+        ServerSocket ssocket = new ServerSocket(Server.PORT);
+        
+        // Start game engine thread
+        Thread engine = new Thread(new Engine());
+        engine.start();
+        
+        try {
+            Utils.logger("Waiting for a connection on port " + Server.PORT, false);
+            while (true) {
+                // Wait new connections
+                Socket socket = ssocket.accept();
+                Utils.logger("connected client: " + socket.getRemoteSocketAddress(), false);
+                // Create a thread from each client.
+                Thread thread = new Thread(new Worker(socket));
+                thread.start();
+            }
+        } finally {
+            ssocket.close();
+        }
+	}
     
     /**
      * Send character type to server.
