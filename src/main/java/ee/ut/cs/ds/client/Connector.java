@@ -71,7 +71,7 @@ public class Connector {
 			@Override
 			public void run() {
 				try {
-					Thread.sleep(10);
+					Thread.sleep(500);
 				} catch (InterruptedException e1) {
 					
 				}

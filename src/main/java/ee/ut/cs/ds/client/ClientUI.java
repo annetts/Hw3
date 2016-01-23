@@ -135,7 +135,7 @@ public class ClientUI extends JPanel implements ActionListener {
 						textIpInput.setEnabled(false);
 					} 
 
-				} catch (IOException e1) {
+				} catch (Exception e1) {
 					Utils.logger("Could not connect to server: " + textIpInput.getText(), true);
 				}
 			}
