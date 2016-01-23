@@ -60,7 +60,7 @@ public class ClientUI extends JPanel implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				avalibleServerList.removeAllItems();
 				for (String server : con.getAllServers()) {
 
 					avalibleServerList.addItem(server);
