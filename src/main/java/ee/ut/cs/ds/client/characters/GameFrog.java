@@ -27,7 +27,6 @@ public class GameFrog extends AGameCharacter {
 			} else {
 				try {
 					imgFrames[i] = ImageIO.read(imageUrl);
-					System.out.println("Loaded image " + imgFilenames[i]);
 				} catch (IOException ex) {
 					ex.printStackTrace();
 				}

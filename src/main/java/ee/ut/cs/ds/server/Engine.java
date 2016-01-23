@@ -82,7 +82,6 @@ public class Engine implements Runnable {
 				        		if (otherChar != null) {
 				        			// add all chars
 				        			message += "#" + otherChar.getX() + "|" + otherChar.getY() + "|" + otherChar.getType();
-				        			System.out.println(message);
 				        		}
 			        	}
 				        } else {
