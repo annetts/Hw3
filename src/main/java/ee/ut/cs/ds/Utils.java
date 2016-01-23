@@ -13,6 +13,8 @@ import java.util.Calendar;
  */
 public class Utils {
 
+	public static final int PORT = 7777;
+	
 	/**
 	 * Write message to output stream
 	 * @param out - output stream of socket.
