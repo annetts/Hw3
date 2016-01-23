@@ -70,11 +70,6 @@ public class Connector {
 			
 			@Override
 			public void run() {
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e1) {
-					
-				}
 		        socket = null;
 		        
 		        try {
@@ -84,21 +79,25 @@ public class Connector {
 
 		            //TODO idk. if this here look correct place for this, but difficult to improve.
 		            String mesage = Utils.readMessage(inputStream);
-		            System.out.println(mesage);
 		            String[] dimentions = mesage.split("\\|");
 		            Constants.grid_width = Integer.parseInt(dimentions[0]);
 		            Constants.grid_height = Integer.parseInt(dimentions[1]);
 		            Utils.logger("Set Game grid size to: " + Constants.grid_width + "x" + Constants.grid_height, false);
 		        } catch (Exception e) {
-					Utils.logger("try again " + e, false);
+		        	e.getStackTrace();
+					Utils.logger("try again ", false);
 				}
 			}
 		});
         client.start();
     }
 	
-	
+	boolean serverRunning = false;
 	public void startServer(final Runnable done) {
+		if (serverRunning) {
+			return;
+		}
+		
 		Thread thread = new Thread(new Runnable() {
 			
 			@Override
@@ -201,7 +200,7 @@ public class Connector {
 			ch.add(c);
 		}
 		//TODO implement somkind of debug flag maybe to no pullute client console.
-		Utils.logger(characterPositions, false);
+		Utils.debug(characterPositions);
 	}
 	
 	public List<String> getAllServers() {

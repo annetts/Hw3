@@ -14,6 +14,7 @@ import java.util.Calendar;
 public class Utils {
 
 	public static final int PORT = 7777;
+	private static final boolean DEBUG = false;
 	
 	/**
 	 * Write message to output stream
@@ -60,4 +61,10 @@ public class Utils {
         System.out.println("Enter command:");
         return reader.readLine();
     }
+
+	public static void debug(String characterPositions) {
+		if (DEBUG) {
+			System.out.println("[" + Calendar.getInstance().getTime() + "] " + characterPositions.trim());			
+		}
+	}
 }
