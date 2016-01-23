@@ -103,7 +103,7 @@ public class ClientUI extends JPanel implements ActionListener {
 								try {
 									con.connect(null);
 								} catch (IOException e) {
-									Utils.logger("unable to connect local serer!", true);
+									Utils.logger("unable to connect local server try again!", true);
 								}
 							}
 						});

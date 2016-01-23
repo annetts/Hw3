@@ -3,7 +3,6 @@ package ee.ut.cs.ds.server;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Holds a list of Connected clients. Each client is specified by socket and
