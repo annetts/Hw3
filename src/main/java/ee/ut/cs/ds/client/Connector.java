@@ -4,8 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +39,7 @@ public class Connector {
 		this.ch = characters;
 		this.cache = "";
 	}
-    
+	
 	/**
 	 * Starts the main loop of connector. Connector waits all character
 	 * positions form client and refreshed list of characters after every
@@ -98,6 +103,28 @@ public class Connector {
 			return;
 		}
 		
+		Thread broadCastThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					DatagramSocket socket = new DatagramSocket(8888, InetAddress.getByName("0.0.0.0"));
+					socket.setBroadcast(true);
+					
+					while (true) {
+						byte[] buffer = new byte[1024];
+						DatagramPacket p = new DatagramPacket(buffer, buffer.length);
+						socket.receive(p);
+						
+						System.out.println(p.getData().toString());
+					}
+
+				} catch (IOException e) {
+					Utils.logger("Could not get server list: " + e.getStackTrace(), true);
+				}
+			}
+		});
+		
 		Thread thread = new Thread(new Runnable() {
 			
 			@Override
@@ -109,6 +136,7 @@ public class Connector {
 				}
 			}
 		});
+		broadCastThread.start();
 		thread.start();
 	}
 	
@@ -205,6 +233,20 @@ public class Connector {
 	
 	public List<String> getAllServers() {
 		List<String> list = new ArrayList<>();
+		try {
+			DatagramSocket socket = new DatagramSocket(8888, InetAddress.getByName("255.255.255.255"));
+			socket.setBroadcast(true);
+			
+			byte[] buffer = "Discover".getBytes();
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+			
+			socket.send(packet);
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
 		list.add("127.0.0.1");
 		list.add("192.168.0.0");
 		list.add("192.168.0.3");
