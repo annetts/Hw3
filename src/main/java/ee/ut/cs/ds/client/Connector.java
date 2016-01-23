@@ -234,11 +234,11 @@ public class Connector {
 	public List<String> getAllServers() {
 		List<String> list = new ArrayList<>();
 		try {
-			DatagramSocket socket = new DatagramSocket(8888, InetAddress.getByName("255.255.255.255"));
+			DatagramSocket socket = new DatagramSocket();
 			socket.setBroadcast(true);
 			
 			byte[] buffer = "Discover".getBytes();
-			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("255.255.255.255"), 8888);
 			
 			socket.send(packet);
 			socket.close();
