@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
-Built-By: rauno
-Build-Jdk: 1.8.0_60
+Built-By: Rauno
+Build-Jdk: 1.8.0_45
 Created-By: Maven Integration for Eclipse
+Main-Class: ee.ut.cs.ds.client.Game
 

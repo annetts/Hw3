@@ -1,16 +1,18 @@
 package ee.ut.cs.ds.client;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +35,8 @@ public class Connector {
     private BufferedReader inputStream = null;
     private String cache; // if chache to check if something is changed
 	private Socket socket;
-
+	private static final int M_MAX_SIZE = 8192;
+	private static final String DISCOVER = "Discover";
     
 	public Connector(List<AGameCharacter> characters) throws IOException {
 		this.ch = characters;
@@ -113,10 +116,16 @@ public class Connector {
 					
 					while (true) {
 						byte[] buffer = new byte[1024];
-						DatagramPacket p = new DatagramPacket(buffer, buffer.length);
-						socket.receive(p);
-						
-						System.out.println(p.getData().toString());
+						DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+						socket.receive(packet);
+			            String message = readAll(buffer);
+			            
+			            if (DISCOVER.equals(message.trim())) {
+			            	buffer = DISCOVER.getBytes(Charset.forName("UTF-8"));
+		                    packet.setSocketAddress(new InetSocketAddress(packet.getAddress(), packet.getPort()));
+		                    packet.setData(buffer);
+		                    socket.send(packet);
+			            }
 					}
 
 				} catch (IOException e) {
@@ -235,24 +244,46 @@ public class Connector {
 		List<String> list = new ArrayList<>();
 		try {
 			DatagramSocket socket = new DatagramSocket();
+			socket.setSoTimeout(5000);
 			socket.setBroadcast(true);
 			
-			byte[] buffer = "Discover".getBytes();
+			byte[] buffer = DISCOVER.getBytes(Charset.forName("UTF-8"));
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("255.255.255.255"), 8888);
 			
 			socket.send(packet);
-			socket.close();
+			
+			while (true) {
+				// clear buffer from old data
+				buffer = new byte[M_MAX_SIZE];
+				packet.setData(buffer);
+				// wait for OK message
+				socket.receive(packet);
+				String message = readAll(buffer);
+				if (DISCOVER.equals(message.trim())) {
+					list.add(packet.getAddress().getHostAddress());
+				}
+			}
+
 		} catch (IOException e) {
-			e.printStackTrace();
+			// hacky solution to wait 5 sec for discovery responses.
+			return list;
 		}
-		
-		
-		list.add("127.0.0.1");
-		list.add("192.168.0.0");
-		list.add("192.168.0.3");
-		return list;
 	}
 
+    private String readAll(byte[] buffer) throws IOException {
+        Reader reader = new InputStreamReader(new ByteArrayInputStream(buffer), Charset.forName("UTF-8"));
+        char buf[] = new char[128];
+        StringBuffer stringBuffer = new StringBuffer();
+        while (true) {
+            int n = reader.read(buf);
+            if (n == -1)
+                break; // end of the stream
+            stringBuffer.append(buf, 0, n);
+        }
+
+        return stringBuffer.toString();
+    }
+	
 	public boolean isConnected() {
 		return socket != null && socket.isConnected();
 	}
