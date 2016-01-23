@@ -16,11 +16,13 @@ ee\ut\cs\ds\client\Game$2.class
 ee\ut\cs\ds\client\GamePanel$1.class
 ee\ut\cs\ds\server\Worker.class
 ee\ut\cs\ds\client\characters\GameFly.class
+ee\ut\cs\ds\client\ClientUI$5.class
 ee\ut\cs\ds\client\Constants.class
 ee\ut\cs\ds\client\characters\AGameCharacter.class
 ee\ut\cs\ds\client\ClientUI.class
 ee\ut\cs\ds\client\ClientUI$2.class
 ee\ut\cs\ds\client\Game$5.class
+ee\ut\cs\ds\client\ClientUI$4.class
 ee\ut\cs\ds\client\GamePanel.class
 ee\ut\cs\ds\server\Engine.class
 ee\ut\cs\ds\client\GamePanel$2.class
