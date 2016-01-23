@@ -1,7 +1,5 @@
 package ee.ut.cs.ds.client;
 
-import static java.lang.String.format;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,7 +13,6 @@ import ee.ut.cs.ds.client.characters.AGameCharacter;
 import ee.ut.cs.ds.client.characters.GameFly;
 import ee.ut.cs.ds.client.characters.GameFrog;
 import ee.ut.cs.ds.server.Engine;
-import ee.ut.cs.ds.server.Server;
 import ee.ut.cs.ds.server.Worker;
 
 /**
@@ -68,43 +65,65 @@ public class Connector {
 	 * @throws IOException
 	 */
 	public void connect(String host) throws IOException {
-        if (host == null) {
-            System.err.println(format("Usage: java %s <host>", Connector.class.getCanonicalName()));
-            System.exit(1);
-        }
-        
-        socket = null;
-        
-        try {
-            socket = new Socket(host, Server.PORT);
-            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            outputStream = socket.getOutputStream();
+        Thread client = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+		        socket = null;
+		        
+		        try {
+		            socket = new Socket(host, Utils.PORT);
+		            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		            outputStream = socket.getOutputStream();
 
-            //TODO idk. if this here look correct place for this, but difficult to improve.
-            String mesage = Utils.readMessage(inputStream);
-            System.out.println(mesage);
-            String[] dimentions = mesage.split("\\|");
-            Constants.grid_width = Integer.parseInt(dimentions[0]);
-            Constants.grid_height = Integer.parseInt(dimentions[1]);
-            Utils.logger("Set Game grid size to: " + Constants.grid_width + "x" + Constants.grid_height, false);
-        } catch (Exception e) {
-			Utils.logger("try again", false);
-		}
+		            //TODO idk. if this here look correct place for this, but difficult to improve.
+		            String mesage = Utils.readMessage(inputStream);
+		            System.out.println(mesage);
+		            String[] dimentions = mesage.split("\\|");
+		            Constants.grid_width = Integer.parseInt(dimentions[0]);
+		            Constants.grid_height = Integer.parseInt(dimentions[1]);
+		            Utils.logger("Set Game grid size to: " + Constants.grid_width + "x" + Constants.grid_height, false);
+		        } catch (Exception e) {
+					Utils.logger("try again " + e, false);
+				}
+			}
+		});
+        client.start();
     }
 	
 	
-	public void startServer() throws IOException {
+	public void startServer(final Runnable done) {
+		Thread thread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					startListening(done);
+				} catch (IOException e) {
+					Utils.logger("cannot start server!" + e, true);
+				}
+			}
+		});
+		thread.start();
+	}
+	
+	private void startListening(Runnable done) throws IOException {
     	// Initialize socket
-        ServerSocket ssocket = new ServerSocket(Server.PORT);
+        ServerSocket ssocket = new ServerSocket(Utils.PORT);
         
         // Start game engine thread
         Thread engine = new Thread(new Engine());
         engine.start();
-        
+        boolean started = false;
         try {
-            Utils.logger("Waiting for a connection on port " + Server.PORT, false);
+            Utils.logger("Waiting for a connection on port " + Utils.PORT, false);
             while (true) {
                 // Wait new connections
+            	if (!started) {
+            		done.run();
+            		started = true;
+            	}
                 Socket socket = ssocket.accept();
                 Utils.logger("connected client: " + socket.getRemoteSocketAddress(), false);
                 // Create a thread from each client.

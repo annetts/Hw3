@@ -91,10 +91,24 @@ public class ClientUI extends JPanel implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					// if ip is set "". Use null value
-					if (server.isSelected()){
-						con.startServer();
+					if (server.isSelected() && !con.isConnected()){
+						server.setEnabled(false);
+						client.setEnabled(false);
+						con.startServer(new Runnable() {
+							
+							@Override
+							public void run() {
+								try {
+									con.connect(null);
+								} catch (IOException e) {
+									Utils.logger("unable to connect local serer!", true);
+								}
+							}
+						});
 					}
-					if (client.isSelected()){
+					if (client.isSelected() && !con.isConnected()){
+						server.setEnabled(false);
+						client.setEnabled(false);
 						con.connect(textIpInput.equals("") ? null : textIpInput.getText());		
 					}
 				
