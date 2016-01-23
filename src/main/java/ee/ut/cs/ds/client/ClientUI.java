@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,17 +38,29 @@ public class ClientUI extends JPanel implements ActionListener {
 		JRadioButton client = (JRadioButton) addElement( new JRadioButton("Client"), constraints, 1, 1);
 		addElement(new JLabel("Enter name:"), constraints, 0, 2);
 		JTextField textNameInput = (JTextField) addElement(new JTextField(20), constraints, 0, 3);
-		addElement(new JLabel("Enter ip: "), constraints, 0, 4);
-		JTextField textIpInput = (JTextField) addElement(new JTextField(20), constraints, 0, 5);
-		JRadioButton fly = (JRadioButton) addElement( new JRadioButton("Fly"), constraints, 0, 6);
-		JRadioButton frog = (JRadioButton) addElement(new JRadioButton("Frog"), constraints, 1, 6);
-		JButton buttonLogin = (JButton) addElement(new JButton("Submit"), constraints, 0, 7);
+		addElement(new JLabel("Check for running servers:"), constraints, 0, 4);
+		JButton cheking = new JButton("CHECK");
+		addElement(cheking, constraints, 0, 5);
+		addElement(new JComboBox<String>(), constraints, 0, 6);
+		addElement(new JLabel("Choose your character:"), constraints, 0, 7);
+		JRadioButton fly = (JRadioButton) addElement( new JRadioButton("Fly"), constraints, 0, 8);
+		JRadioButton frog = (JRadioButton) addElement(new JRadioButton("Frog"), constraints, 1, 8);
+		JButton buttonLogin = (JButton) addElement(new JButton("Submit"), constraints, 0, 9);
 
 		constraints.anchor = GridBagConstraints.CENTER;
 		add(buttonLogin, constraints);
 		
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Enter Game info"));
 		
+		
+		cheking.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ip_list = client.isSelected(con.);
+				
+			}
+		});
 		
 		server.addActionListener(new ActionListener() {
 
