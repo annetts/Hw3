@@ -35,8 +35,6 @@ public class ClientUI extends JPanel implements ActionListener {
 		addElement(new JLabel("Choose client/server:"), constraints, 0, 0);
 		JRadioButton server = (JRadioButton) addElement( new JRadioButton("Server"), constraints, 0, 1);
 		JRadioButton client = (JRadioButton) addElement( new JRadioButton("Client"), constraints, 1, 1);
-		
-		
 		addElement(new JLabel("Enter name:"), constraints, 0, 2);
 		JTextField textNameInput = (JTextField) addElement(new JTextField(20), constraints, 0, 3);
 		addElement(new JLabel("Enter ip: "), constraints, 0, 4);
