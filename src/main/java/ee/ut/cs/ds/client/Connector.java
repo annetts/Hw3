@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 import ee.ut.cs.ds.Utils;
@@ -69,7 +70,11 @@ public class Connector {
 			
 			@Override
 			public void run() {
-				
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e1) {
+					
+				}
 		        socket = null;
 		        
 		        try {
@@ -168,7 +173,7 @@ public class Connector {
 			return;
 		}
 		if (characterPositions.equals("")) {
-			System.exit(0);
+			return;
 		}
 		// update Cache
 		cache = characterPositions;
@@ -197,6 +202,14 @@ public class Connector {
 		}
 		//TODO implement somkind of debug flag maybe to no pullute client console.
 		Utils.logger(characterPositions, false);
+	}
+	
+	public List<String> getAllServers() {
+		List<String> list = new ArrayList<>();
+		list.add("127.0.0.1");
+		list.add("192.168.0.0");
+		list.add("192.168.0.3");
+		return list;
 	}
 
 	public boolean isConnected() {
